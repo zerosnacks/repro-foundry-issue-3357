@@ -1,0 +1,1 @@
+genhtml --branch-coverage -o reports/coverage/ir-minimum lcov.info

@@ -1,6 +1,14 @@
 [profile.default]
-src = "src"
-out = "out"
 libs = ["lib"]
+names = true
+sizes = true
+via_ir = true
+optimizer = true
+optimizer_runs = 999999
+bytecode_hash = "none"
+evm_version = "paris"
 
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+[profile.default.invariant]
+runs = 16
+depth = 256
+fail_on_revert = true

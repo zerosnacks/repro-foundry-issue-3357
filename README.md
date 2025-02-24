@@ -1,66 +1,13 @@
-## Foundry
+## Repro
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+https://github.com/foundry-rs/foundry/issues/3357
 
-Foundry consists of:
+_bug(forge coverage): stack too deep when using --ir-minimum and coverage report is not accurate_
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Reported issues:
 
-## Documentation
+`--ir-minimum` disables optimizations causing stack to deep.
 
-https://book.getfoundry.sh/
+The limitation ultimately lies in the current implementation of our Yul->EVM transform. It's sometimes unable to produce a viable stack layout and gives up. The minimum optimizations added here (i.e. unused pruner) reduce the stack pressure, making this happen less but there are still some hard cases where this happens even with the help of the stack-to-memory mover.
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+This will be solved eventually, but it'll still be a while until any of the solutions land. On one hand we're working on a better Yul->EVM transform. On other the EVM is also moving towards EOF where the problem will no longer exist thanks to SWAPN/DUPN opcodes.

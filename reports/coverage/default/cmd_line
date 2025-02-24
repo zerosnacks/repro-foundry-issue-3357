@@ -1,0 +1,1 @@
+genhtml --branch-coverage -o reports/coverage/default lcov.info

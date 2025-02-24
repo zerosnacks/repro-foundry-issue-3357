@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - test/forge/helpers/test/forge/helpers/WadMath.sol</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">test/forge/helpers/test/forge/helpers</a> - WadMath.sol<span style="font-size: 80%;"> (source / <a href="WadMath.sol.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">134</td>
+            <td class="headerCovTableEntry">134</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-02-24 12:52:48</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">98.4&nbsp;%</td>
+            <td class="headerCovTableEntry">123</td>
+            <td class="headerCovTableEntry">121</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : // SPDX-License-Identifier: GPL-3.0-or-later</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : pragma solidity ^0.8.0;</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : </span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : /**</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             :  * @title Fixed point arithmetic library</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             :  * @author Alberto Cuesta Cañada, Jacob Eliosoff, Alex Roan</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             :  * @notice This library is imported for testing purposes only. It is not used in production.</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             :  *         Code is cut from https://raw.githubusercontent.com/usmfum/USM/master/contracts/WadMath.sol</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             :  */</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : library WadMath {</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             :     uint256 public constant WAD = 1e18;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             :     uint256 public constant FLOOR_LOG_2_WAD_SCALED = 158961593653514369813532673448321674075; // log2(1e18) * 2**121</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             :     uint256 public constant CEIL_LOG_2_E_SCALED_OVER_WAD = 3835341275459348170; // log2(e) * 2**121 / 1e18</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :<span class="tlaGNC tlaBgGNC">         256 :     function wadDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {</span></span>
+<span id="L16"><span class="lineNum">      16</span>                 :<span class="tlaGNC">         256 :         z = x * WAD + y; // 101 (1.01) / 1000 (10) -&gt; (101 * 100 + 1000 - 1) / 1000 -&gt; 11 (0.11 = 0.101 rounded up).</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :             :         unchecked {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC">         256 :             z -= 1;</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :         } // Can do unchecked subtraction since division in next line will catch y = 0 case anyway</span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">         256 :         z /= y;</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     }</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         256 :     function wadExpUp(uint256 y) internal pure returns (uint256 z) {</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">         256 :         uint256 exponent = FLOOR_LOG_2_WAD_SCALED - CEIL_LOG_2_E_SCALED_OVER_WAD * y;</span></span>
+<span id="L25"><span class="lineNum">      25</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">         256 :         require(exponent &lt;= type(uint128).max, &quot;exponent overflow&quot;);</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         256 :         uint256 wadOneOverExpY = pow_2(uint128(exponent));</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">         256 :         z = wadDivUp(WAD, wadOneOverExpY);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :     }</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     /**</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :      * Calculate 2 raised into given power.</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :      *</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :      * @param x power to raise 2 into, multiplied by 2^121</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :      * @return z 2 raised into given power</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :      */</span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">         256 :     function pow_2(uint128 x) internal pure returns (uint128 z) {</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :         unchecked {</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">         256 :             uint256 r = 0x80000000000000000000000000000000;</span></span>
+<span id="L39"><span class="lineNum">      39</span>            [<span class="tlaGBC" title="Branch 0 was taken 218 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000000000000000000 &gt; 0) r = r * 0xb504f333f9de6484597d89b3754abe9f &gt;&gt; 127;</span></span>
+<span id="L40"><span class="lineNum">      40</span>            [<span class="tlaGBC" title="Branch 0 was taken 194 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000000000000000000 &gt; 0) r = r * 0x9837f0518db8a96f46ad23182e42f6f6 &gt;&gt; 127;</span></span>
+<span id="L41"><span class="lineNum">      41</span>            [<span class="tlaGBC" title="Branch 0 was taken 54 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000000000000000000 &gt; 0) r = r * 0x8b95c1e3ea8bd6e6fbe4628758a53c90 &gt;&gt; 127;</span></span>
+<span id="L42"><span class="lineNum">      42</span>            [<span class="tlaGBC" title="Branch 0 was taken 44 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000000000000000000 &gt; 0) r = r * 0x85aac367cc487b14c5c95b8c2154c1b2 &gt;&gt; 127;</span></span>
+<span id="L43"><span class="lineNum">      43</span>            [<span class="tlaGBC" title="Branch 0 was taken 202 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000000000000000000 &gt; 0) r = r * 0x82cd8698ac2ba1d73e2a475b46520bff &gt;&gt; 127;</span></span>
+<span id="L44"><span class="lineNum">      44</span>            [<span class="tlaGBC" title="Branch 0 was taken 53 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000000000000000000 &gt; 0) r = r * 0x8164d1f3bc0307737be56527bd14def4 &gt;&gt; 127;</span></span>
+<span id="L45"><span class="lineNum">      45</span>            [<span class="tlaGBC" title="Branch 0 was taken 206 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000000000000000000 &gt; 0) r = r * 0x80b1ed4fd999ab6c25335719b6e6fd20 &gt;&gt; 127;</span></span>
+<span id="L46"><span class="lineNum">      46</span>            [<span class="tlaGBC" title="Branch 0 was taken 207 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000000000000000000 &gt; 0) r = r * 0x8058d7d2d5e5f6b094d589f608ee4aa2 &gt;&gt; 127;</span></span>
+<span id="L47"><span class="lineNum">      47</span>            [<span class="tlaGBC" title="Branch 0 was taken 58 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000000000000000000 &gt; 0) r = r * 0x802c6436d0e04f50ff8ce94a6797b3ce &gt;&gt; 127;</span></span>
+<span id="L48"><span class="lineNum">      48</span>            [<span class="tlaGBC" title="Branch 0 was taken 205 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000000000000000000 &gt; 0) r = r * 0x8016302f174676283690dfe44d11d008 &gt;&gt; 127;</span></span>
+<span id="L49"><span class="lineNum">      49</span>            [<span class="tlaGBC" title="Branch 0 was taken 197 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000000000000000000 &gt; 0) r = r * 0x800b179c82028fd0945e54e2ae18f2f0 &gt;&gt; 127;</span></span>
+<span id="L50"><span class="lineNum">      50</span>            [<span class="tlaGBC" title="Branch 0 was taken 196 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000000000000000000 &gt; 0) r = r * 0x80058baf7fee3b5d1c718b38e549cb93 &gt;&gt; 127;</span></span>
+<span id="L51"><span class="lineNum">      51</span>            [<span class="tlaGBC" title="Branch 0 was taken 60 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000000000000000 &gt; 0) r = r * 0x8002c5d00fdcfcb6b6566a58c048be1f &gt;&gt; 127;</span></span>
+<span id="L52"><span class="lineNum">      52</span>            [<span class="tlaGBC" title="Branch 0 was taken 53 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000000000000000 &gt; 0) r = r * 0x800162e61bed4a48e84c2e1a463473d9 &gt;&gt; 127;</span></span>
+<span id="L53"><span class="lineNum">      53</span>            [<span class="tlaGBC" title="Branch 0 was taken 61 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000000000000000 &gt; 0) r = r * 0x8000b17292f702a3aa22beacca949013 &gt;&gt; 127;</span></span>
+<span id="L54"><span class="lineNum">      54</span>            [<span class="tlaGBC" title="Branch 0 was taken 198 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000000000000000 &gt; 0) r = r * 0x800058b92abbae02030c5fa5256f41fe &gt;&gt; 127;</span></span>
+<span id="L55"><span class="lineNum">      55</span>            [<span class="tlaGBC" title="Branch 0 was taken 192 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000000000000000 &gt; 0) r = r * 0x80002c5c8dade4d71776c0f4dbea67d6 &gt;&gt; 127;</span></span>
+<span id="L56"><span class="lineNum">      56</span>            [<span class="tlaGBC" title="Branch 0 was taken 189 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000000000000000 &gt; 0) r = r * 0x8000162e44eaf636526be456600bdbe4 &gt;&gt; 127;</span></span>
+<span id="L57"><span class="lineNum">      57</span>            [<span class="tlaGBC" title="Branch 0 was taken 65 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000000000000000 &gt; 0) r = r * 0x80000b1721fa7c188307016c1cd4e8b6 &gt;&gt; 127;</span></span>
+<span id="L58"><span class="lineNum">      58</span>            [<span class="tlaGBC" title="Branch 0 was taken 194 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000000000000000 &gt; 0) r = r * 0x8000058b90de7e4cecfc487503488bb1 &gt;&gt; 127;</span></span>
+<span id="L59"><span class="lineNum">      59</span>            [<span class="tlaGBC" title="Branch 0 was taken 66 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000000000000000 &gt; 0) r = r * 0x800002c5c8678f36cbfce50a6de60b14 &gt;&gt; 127;</span></span>
+<span id="L60"><span class="lineNum">      60</span>            [<span class="tlaGBC" title="Branch 0 was taken 200 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000000000000000 &gt; 0) r = r * 0x80000162e431db9f80b2347b5d62e516 &gt;&gt; 127;</span></span>
+<span id="L61"><span class="lineNum">      61</span>            [<span class="tlaGBC" title="Branch 0 was taken 73 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000000000000000 &gt; 0) r = r * 0x800000b1721872d0c7b08cf1e0114152 &gt;&gt; 127;</span></span>
+<span id="L62"><span class="lineNum">      62</span>            [<span class="tlaGBC" title="Branch 0 was taken 186 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000000000000000 &gt; 0) r = r * 0x80000058b90c1aa8a5c3736cb77e8dff &gt;&gt; 127;</span></span>
+<span id="L63"><span class="lineNum">      63</span>            [<span class="tlaGBC" title="Branch 0 was taken 56 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000000000000 &gt; 0) r = r * 0x8000002c5c8605a4635f2efc2362d978 &gt;&gt; 127;</span></span>
+<span id="L64"><span class="lineNum">      64</span>            [<span class="tlaGBC" title="Branch 0 was taken 178 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000000000000 &gt; 0) r = r * 0x800000162e4300e635cf4a109e3939bd &gt;&gt; 127;</span></span>
+<span id="L65"><span class="lineNum">      65</span>            [<span class="tlaGBC" title="Branch 0 was taken 62 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000000000000 &gt; 0) r = r * 0x8000000b17217ff81bef9c551590cf83 &gt;&gt; 127;</span></span>
+<span id="L66"><span class="lineNum">      66</span>            [<span class="tlaGBC" title="Branch 0 was taken 171 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000000000000 &gt; 0) r = r * 0x800000058b90bfdd4e39cd52c0cfa27c &gt;&gt; 127;</span></span>
+<span id="L67"><span class="lineNum">      67</span>            [<span class="tlaGBC" title="Branch 0 was taken 96 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000000000000 &gt; 0) r = r * 0x80000002c5c85fe6f72d669e0e76e411 &gt;&gt; 127;</span></span>
+<span id="L68"><span class="lineNum">      68</span>            [<span class="tlaGBC" title="Branch 0 was taken 105 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000000000000 &gt; 0) r = r * 0x8000000162e42ff18f9ad35186d0df28 &gt;&gt; 127;</span></span>
+<span id="L69"><span class="lineNum">      69</span>            [<span class="tlaGBC" title="Branch 0 was taken 97 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000000000000 &gt; 0) r = r * 0x80000000b17217f84cce71aa0dcfffe7 &gt;&gt; 127;</span></span>
+<span id="L70"><span class="lineNum">      70</span>            [<span class="tlaGBC" title="Branch 0 was taken 142 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000000000000 &gt; 0) r = r * 0x8000000058b90bfc07a77ad56ed22aaa &gt;&gt; 127;</span></span>
+<span id="L71"><span class="lineNum">      71</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000000000000 &gt; 0) r = r * 0x800000002c5c85fdfc23cdead40da8d6 &gt;&gt; 127;</span></span>
+<span id="L72"><span class="lineNum">      72</span>            [<span class="tlaGBC" title="Branch 0 was taken 105 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000000000000 &gt; 0) r = r * 0x80000000162e42fefc25eb1571853a66 &gt;&gt; 127;</span></span>
+<span id="L73"><span class="lineNum">      73</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000000000000 &gt; 0) r = r * 0x800000000b17217f7d97f692baacded5 &gt;&gt; 127;</span></span>
+<span id="L74"><span class="lineNum">      74</span>            [<span class="tlaGBC" title="Branch 0 was taken 113 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000000000000 &gt; 0) r = r * 0x80000000058b90bfbead3b8b5dd254d7 &gt;&gt; 127;</span></span>
+<span id="L75"><span class="lineNum">      75</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000000000 &gt; 0) r = r * 0x8000000002c5c85fdf4eedd62f084e67 &gt;&gt; 127;</span></span>
+<span id="L76"><span class="lineNum">      76</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000000000 &gt; 0) r = r * 0x800000000162e42fefa58aef378bf586 &gt;&gt; 127;</span></span>
+<span id="L77"><span class="lineNum">      77</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000000000 &gt; 0) r = r * 0x8000000000b17217f7d24a78a3c7ef02 &gt;&gt; 127;</span></span>
+<span id="L78"><span class="lineNum">      78</span>            [<span class="tlaGBC" title="Branch 0 was taken 137 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000000000 &gt; 0) r = r * 0x800000000058b90bfbe9067c93e474a6 &gt;&gt; 127;</span></span>
+<span id="L79"><span class="lineNum">      79</span>            [<span class="tlaGBC" title="Branch 0 was taken 119 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000000000 &gt; 0) r = r * 0x80000000002c5c85fdf47b8e5a72599f &gt;&gt; 127;</span></span>
+<span id="L80"><span class="lineNum">      80</span>            [<span class="tlaGBC" title="Branch 0 was taken 119 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000000000 &gt; 0) r = r * 0x8000000000162e42fefa3bdb315934a2 &gt;&gt; 127;</span></span>
+<span id="L81"><span class="lineNum">      81</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000000000 &gt; 0) r = r * 0x80000000000b17217f7d1d7299b49c46 &gt;&gt; 127;</span></span>
+<span id="L82"><span class="lineNum">      82</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000000000 &gt; 0) r = r * 0x8000000000058b90bfbe8e9a8d1c4ea0 &gt;&gt; 127;</span></span>
+<span id="L83"><span class="lineNum">      83</span>            [<span class="tlaGBC" title="Branch 0 was taken 135 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000000000 &gt; 0) r = r * 0x800000000002c5c85fdf4745969ea76f &gt;&gt; 127;</span></span>
+<span id="L84"><span class="lineNum">      84</span>            [<span class="tlaGBC" title="Branch 0 was taken 138 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000000000 &gt; 0) r = r * 0x80000000000162e42fefa3a0df5373bf &gt;&gt; 127;</span></span>
+<span id="L85"><span class="lineNum">      85</span>            [<span class="tlaGBC" title="Branch 0 was taken 121 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000000000 &gt; 0) r = r * 0x800000000000b17217f7d1cff4aac1e1 &gt;&gt; 127;</span></span>
+<span id="L86"><span class="lineNum">      86</span>            [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000000000 &gt; 0) r = r * 0x80000000000058b90bfbe8e7db95a2f1 &gt;&gt; 127;</span></span>
+<span id="L87"><span class="lineNum">      87</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000000 &gt; 0) r = r * 0x8000000000002c5c85fdf473e61ae1f8 &gt;&gt; 127;</span></span>
+<span id="L88"><span class="lineNum">      88</span>            [<span class="tlaGBC" title="Branch 0 was taken 117 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000000 &gt; 0) r = r * 0x800000000000162e42fefa39f121751c &gt;&gt; 127;</span></span>
+<span id="L89"><span class="lineNum">      89</span>            [<span class="tlaGBC" title="Branch 0 was taken 117 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000000 &gt; 0) r = r * 0x8000000000000b17217f7d1cf815bb96 &gt;&gt; 127;</span></span>
+<span id="L90"><span class="lineNum">      90</span>            [<span class="tlaGBC" title="Branch 0 was taken 146 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000000 &gt; 0) r = r * 0x800000000000058b90bfbe8e7bec1e0d &gt;&gt; 127;</span></span>
+<span id="L91"><span class="lineNum">      91</span>            [<span class="tlaGBC" title="Branch 0 was taken 133 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000000 &gt; 0) r = r * 0x80000000000002c5c85fdf473dee5f17 &gt;&gt; 127;</span></span>
+<span id="L92"><span class="lineNum">      92</span>            [<span class="tlaGBC" title="Branch 0 was taken 135 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000000 &gt; 0) r = r * 0x8000000000000162e42fefa39ef5438f &gt;&gt; 127;</span></span>
+<span id="L93"><span class="lineNum">      93</span>            [<span class="tlaGBC" title="Branch 0 was taken 140 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000000 &gt; 0) r = r * 0x80000000000000b17217f7d1cf7a26c8 &gt;&gt; 127;</span></span>
+<span id="L94"><span class="lineNum">      94</span>            [<span class="tlaGBC" title="Branch 0 was taken 124 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000000 &gt; 0) r = r * 0x8000000000000058b90bfbe8e7bcf4a4 &gt;&gt; 127;</span></span>
+<span id="L95"><span class="lineNum">      95</span>            [<span class="tlaGBC" title="Branch 0 was taken 127 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000000 &gt; 0) r = r * 0x800000000000002c5c85fdf473de72a2 &gt;&gt; 127;</span></span>
+<span id="L96"><span class="lineNum">      96</span>            [<span class="tlaGBC" title="Branch 0 was taken 120 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000000 &gt; 0) r = r * 0x80000000000000162e42fefa39ef3765 &gt;&gt; 127;</span></span>
+<span id="L97"><span class="lineNum">      97</span>            [<span class="tlaGBC" title="Branch 0 was taken 137 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000000 &gt; 0) r = r * 0x800000000000000b17217f7d1cf79b37 &gt;&gt; 127;</span></span>
+<span id="L98"><span class="lineNum">      98</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000000 &gt; 0) r = r * 0x80000000000000058b90bfbe8e7bcd7d &gt;&gt; 127;</span></span>
+<span id="L99"><span class="lineNum">      99</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000000 &gt; 0) r = r * 0x8000000000000002c5c85fdf473de6b6 &gt;&gt; 127;</span></span>
+<span id="L100"><span class="lineNum">     100</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000000 &gt; 0) r = r * 0x800000000000000162e42fefa39ef359 &gt;&gt; 127;</span></span>
+<span id="L101"><span class="lineNum">     101</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000000 &gt; 0) r = r * 0x8000000000000000b17217f7d1cf79ac &gt;&gt; 127;</span></span>
+<span id="L102"><span class="lineNum">     102</span>            [<span class="tlaGBC" title="Branch 0 was taken 141 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000000 &gt; 0) r = r * 0x800000000000000058b90bfbe8e7bcd6 &gt;&gt; 127;</span></span>
+<span id="L103"><span class="lineNum">     103</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000000 &gt; 0) r = r * 0x80000000000000002c5c85fdf473de6a &gt;&gt; 127;</span></span>
+<span id="L104"><span class="lineNum">     104</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000000 &gt; 0) r = r * 0x8000000000000000162e42fefa39ef35 &gt;&gt; 127;</span></span>
+<span id="L105"><span class="lineNum">     105</span>            [<span class="tlaGBC" title="Branch 0 was taken 120 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000000 &gt; 0) r = r * 0x80000000000000000b17217f7d1cf79a &gt;&gt; 127;</span></span>
+<span id="L106"><span class="lineNum">     106</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000000 &gt; 0) r = r * 0x8000000000000000058b90bfbe8e7bcd &gt;&gt; 127;</span></span>
+<span id="L107"><span class="lineNum">     107</span>            [<span class="tlaGBC" title="Branch 0 was taken 122 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000000 &gt; 0) r = r * 0x800000000000000002c5c85fdf473de6 &gt;&gt; 127;</span></span>
+<span id="L108"><span class="lineNum">     108</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000000 &gt; 0) r = r * 0x80000000000000000162e42fefa39ef3 &gt;&gt; 127;</span></span>
+<span id="L109"><span class="lineNum">     109</span>            [<span class="tlaGBC" title="Branch 0 was taken 117 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000000 &gt; 0) r = r * 0x800000000000000000b17217f7d1cf79 &gt;&gt; 127;</span></span>
+<span id="L110"><span class="lineNum">     110</span>            [<span class="tlaGBC" title="Branch 0 was taken 127 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000000 &gt; 0) r = r * 0x80000000000000000058b90bfbe8e7bc &gt;&gt; 127;</span></span>
+<span id="L111"><span class="lineNum">     111</span>            [<span class="tlaGBC" title="Branch 0 was taken 115 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000000 &gt; 0) r = r * 0x8000000000000000002c5c85fdf473de &gt;&gt; 127;</span></span>
+<span id="L112"><span class="lineNum">     112</span>            [<span class="tlaGBC" title="Branch 0 was taken 121 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000000 &gt; 0) r = r * 0x800000000000000000162e42fefa39ef &gt;&gt; 127;</span></span>
+<span id="L113"><span class="lineNum">     113</span>            [<span class="tlaGBC" title="Branch 0 was taken 136 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000000 &gt; 0) r = r * 0x8000000000000000000b17217f7d1cf7 &gt;&gt; 127;</span></span>
+<span id="L114"><span class="lineNum">     114</span>            [<span class="tlaGBC" title="Branch 0 was taken 137 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000000 &gt; 0) r = r * 0x800000000000000000058b90bfbe8e7b &gt;&gt; 127;</span></span>
+<span id="L115"><span class="lineNum">     115</span>            [<span class="tlaGBC" title="Branch 0 was taken 143 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000000 &gt; 0) r = r * 0x80000000000000000002c5c85fdf473d &gt;&gt; 127;</span></span>
+<span id="L116"><span class="lineNum">     116</span>            [<span class="tlaGBC" title="Branch 0 was taken 142 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000000 &gt; 0) r = r * 0x8000000000000000000162e42fefa39e &gt;&gt; 127;</span></span>
+<span id="L117"><span class="lineNum">     117</span>            [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000000 &gt; 0) r = r * 0x80000000000000000000b17217f7d1cf &gt;&gt; 127;</span></span>
+<span id="L118"><span class="lineNum">     118</span>            [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000000 &gt; 0) r = r * 0x8000000000000000000058b90bfbe8e7 &gt;&gt; 127;</span></span>
+<span id="L119"><span class="lineNum">     119</span>            [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000000 &gt; 0) r = r * 0x800000000000000000002c5c85fdf473 &gt;&gt; 127;</span></span>
+<span id="L120"><span class="lineNum">     120</span>            [<span class="tlaGBC" title="Branch 0 was taken 134 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000000 &gt; 0) r = r * 0x80000000000000000000162e42fefa39 &gt;&gt; 127;</span></span>
+<span id="L121"><span class="lineNum">     121</span>            [<span class="tlaGBC" title="Branch 0 was taken 133 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000000 &gt; 0) r = r * 0x800000000000000000000b17217f7d1c &gt;&gt; 127;</span></span>
+<span id="L122"><span class="lineNum">     122</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000000 &gt; 0) r = r * 0x80000000000000000000058b90bfbe8e &gt;&gt; 127;</span></span>
+<span id="L123"><span class="lineNum">     123</span>            [<span class="tlaGBC" title="Branch 0 was taken 115 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000000 &gt; 0) r = r * 0x8000000000000000000002c5c85fdf47 &gt;&gt; 127;</span></span>
+<span id="L124"><span class="lineNum">     124</span>            [<span class="tlaGBC" title="Branch 0 was taken 121 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000000 &gt; 0) r = r * 0x800000000000000000000162e42fefa3 &gt;&gt; 127;</span></span>
+<span id="L125"><span class="lineNum">     125</span>            [<span class="tlaGBC" title="Branch 0 was taken 130 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000000 &gt; 0) r = r * 0x8000000000000000000000b17217f7d1 &gt;&gt; 127;</span></span>
+<span id="L126"><span class="lineNum">     126</span>            [<span class="tlaGBC" title="Branch 0 was taken 122 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000000 &gt; 0) r = r * 0x800000000000000000000058b90bfbe8 &gt;&gt; 127;</span></span>
+<span id="L127"><span class="lineNum">     127</span>            [<span class="tlaGBC" title="Branch 0 was taken 130 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000000 &gt; 0) r = r * 0x80000000000000000000002c5c85fdf4 &gt;&gt; 127;</span></span>
+<span id="L128"><span class="lineNum">     128</span>            [<span class="tlaGBC" title="Branch 0 was taken 122 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000000 &gt; 0) r = r * 0x8000000000000000000000162e42fefa &gt;&gt; 127;</span></span>
+<span id="L129"><span class="lineNum">     129</span>            [<span class="tlaGBC" title="Branch 0 was taken 135 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000000 &gt; 0) r = r * 0x80000000000000000000000b17217f7d &gt;&gt; 127;</span></span>
+<span id="L130"><span class="lineNum">     130</span>            [<span class="tlaGBC" title="Branch 0 was taken 114 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000000 &gt; 0) r = r * 0x8000000000000000000000058b90bfbe &gt;&gt; 127;</span></span>
+<span id="L131"><span class="lineNum">     131</span>            [<span class="tlaGBC" title="Branch 0 was taken 118 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000000 &gt; 0) r = r * 0x800000000000000000000002c5c85fdf &gt;&gt; 127;</span></span>
+<span id="L132"><span class="lineNum">     132</span>            [<span class="tlaGBC" title="Branch 0 was taken 133 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000000 &gt; 0) r = r * 0x80000000000000000000000162e42fef &gt;&gt; 127;</span></span>
+<span id="L133"><span class="lineNum">     133</span>            [<span class="tlaGBC" title="Branch 0 was taken 104 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000000 &gt; 0) r = r * 0x800000000000000000000000b17217f7 &gt;&gt; 127;</span></span>
+<span id="L134"><span class="lineNum">     134</span>            [<span class="tlaGBC" title="Branch 0 was taken 121 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000000 &gt; 0) r = r * 0x80000000000000000000000058b90bfb &gt;&gt; 127;</span></span>
+<span id="L135"><span class="lineNum">     135</span>            [<span class="tlaGBC" title="Branch 0 was taken 127 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000000 &gt; 0) r = r * 0x8000000000000000000000002c5c85fd &gt;&gt; 127;</span></span>
+<span id="L136"><span class="lineNum">     136</span>            [<span class="tlaGBC" title="Branch 0 was taken 116 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800000 &gt; 0) r = r * 0x800000000000000000000000162e42fe &gt;&gt; 127;</span></span>
+<span id="L137"><span class="lineNum">     137</span>            [<span class="tlaGBC" title="Branch 0 was taken 124 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400000 &gt; 0) r = r * 0x8000000000000000000000000b17217f &gt;&gt; 127;</span></span>
+<span id="L138"><span class="lineNum">     138</span>            [<span class="tlaGBC" title="Branch 0 was taken 123 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200000 &gt; 0) r = r * 0x800000000000000000000000058b90bf &gt;&gt; 127;</span></span>
+<span id="L139"><span class="lineNum">     139</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100000 &gt; 0) r = r * 0x80000000000000000000000002c5c85f &gt;&gt; 127;</span></span>
+<span id="L140"><span class="lineNum">     140</span>            [<span class="tlaGBC" title="Branch 0 was taken 117 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80000 &gt; 0) r = r * 0x8000000000000000000000000162e42f &gt;&gt; 127;</span></span>
+<span id="L141"><span class="lineNum">     141</span>            [<span class="tlaGBC" title="Branch 0 was taken 119 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40000 &gt; 0) r = r * 0x80000000000000000000000000b17217 &gt;&gt; 127;</span></span>
+<span id="L142"><span class="lineNum">     142</span>            [<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20000 &gt; 0) r = r * 0x8000000000000000000000000058b90b &gt;&gt; 127;</span></span>
+<span id="L143"><span class="lineNum">     143</span>            [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10000 &gt; 0) r = r * 0x800000000000000000000000002c5c85 &gt;&gt; 127;</span></span>
+<span id="L144"><span class="lineNum">     144</span>            [<span class="tlaGBC" title="Branch 0 was taken 135 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8000 &gt; 0) r = r * 0x80000000000000000000000000162e42 &gt;&gt; 127;</span></span>
+<span id="L145"><span class="lineNum">     145</span>            [<span class="tlaGBC" title="Branch 0 was taken 117 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4000 &gt; 0) r = r * 0x800000000000000000000000000b1721 &gt;&gt; 127;</span></span>
+<span id="L146"><span class="lineNum">     146</span>            [<span class="tlaGBC" title="Branch 0 was taken 126 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2000 &gt; 0) r = r * 0x80000000000000000000000000058b90 &gt;&gt; 127;</span></span>
+<span id="L147"><span class="lineNum">     147</span>            [<span class="tlaGBC" title="Branch 0 was taken 132 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1000 &gt; 0) r = r * 0x8000000000000000000000000002c5c8 &gt;&gt; 127;</span></span>
+<span id="L148"><span class="lineNum">     148</span>            [<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x800 &gt; 0) r = r * 0x800000000000000000000000000162e4 &gt;&gt; 127;</span></span>
+<span id="L149"><span class="lineNum">     149</span>            [<span class="tlaGBC" title="Branch 0 was taken 134 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x400 &gt; 0) r = r * 0x8000000000000000000000000000b172 &gt;&gt; 127;</span></span>
+<span id="L150"><span class="lineNum">     150</span>            [<span class="tlaGBC" title="Branch 0 was taken 142 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x200 &gt; 0) r = r * 0x800000000000000000000000000058b9 &gt;&gt; 127;</span></span>
+<span id="L151"><span class="lineNum">     151</span>            [<span class="tlaGBC" title="Branch 0 was taken 119 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x100 &gt; 0) r = r * 0x80000000000000000000000000002c5c &gt;&gt; 127;</span></span>
+<span id="L152"><span class="lineNum">     152</span>            [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x80 &gt; 0) r = r * 0x8000000000000000000000000000162e &gt;&gt; 127;</span></span>
+<span id="L153"><span class="lineNum">     153</span>            [<span class="tlaGBC" title="Branch 0 was taken 126 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x40 &gt; 0) r = r * 0x80000000000000000000000000000b17 &gt;&gt; 127;</span></span>
+<span id="L154"><span class="lineNum">     154</span>            [<span class="tlaGBC" title="Branch 0 was taken 123 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x20 &gt; 0) r = r * 0x8000000000000000000000000000058b &gt;&gt; 127;</span></span>
+<span id="L155"><span class="lineNum">     155</span>            [<span class="tlaGBC" title="Branch 0 was taken 148 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x10 &gt; 0) r = r * 0x800000000000000000000000000002c5 &gt;&gt; 127;</span></span>
+<span id="L156"><span class="lineNum">     156</span>            [<span class="tlaGBC" title="Branch 0 was taken 139 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x8 &gt; 0) r = r * 0x80000000000000000000000000000162 &gt;&gt; 127;</span></span>
+<span id="L157"><span class="lineNum">     157</span>            [<span class="tlaGBC" title="Branch 0 was taken 78 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x4 &gt; 0) r = r * 0x800000000000000000000000000000b1 &gt;&gt; 127;</span></span>
+<span id="L158"><span class="lineNum">     158</span>            [<span class="tlaGBC" title="Branch 0 was taken 198 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x2 &gt; 0) r = r * 0x80000000000000000000000000000058 &gt;&gt; 127;</span></span>
+<span id="L159"><span class="lineNum">     159</span>            [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span>]:<span class="tlaGNC">         256 :             if (x &amp; 0x1 &gt; 0) r = r * 0x8000000000000000000000000000002c &gt;&gt; 127;</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : </span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">         256 :             r &gt;&gt;= 127 - (x &gt;&gt; 121);</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : </span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">         256 :             z = uint128(r);</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :         }</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     }</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
