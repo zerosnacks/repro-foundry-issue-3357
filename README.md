@@ -12,6 +12,12 @@ The limitation ultimately lies in the current implementation of our Yul->EVM tra
 
 This will be solved eventually, but it'll still be a while until any of the solutions land. On one hand we're working on a better Yul->EVM transform. On other the EVM is also moving towards EOF where the problem will no longer exist thanks to SWAPN/DUPN opcodes.
 
+## Setup
+
+Run `./scripts/coverage.sh`
+
+After running you can relaunch the HTTP servers using `./scripts/server.sh`
+
 ## Reproduction cases
 
 Multiple cases of lines not being hit and branches not being covered.
