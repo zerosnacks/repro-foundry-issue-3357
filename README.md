@@ -14,9 +14,9 @@ This will be solved eventually, but it'll still be a while until any of the solu
 
 ## Setup
 
-Run `./scripts/coverage.sh`
+Run [`./scripts/coverage.sh`](./scripts/coverage.sh)
 
-After running you can relaunch the HTTP servers using `./scripts/server.sh`
+After running you can relaunch the HTTP servers using [`./scripts/serve.sh`](./scripts/serve.sh)
 
 ## Reproduction cases
 
