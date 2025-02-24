@@ -130,3 +130,7 @@ Haven't yet seen a false positive however.
       21                 :             :     }
       22                 :             : }
 ```
+
+## Credit
+
+Uses [`morpho-blue`](https://github.com/morpho-org/morpho-blue) to compare the different compilation pipelines.
