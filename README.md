@@ -24,7 +24,7 @@ Multiple cases of lines not being hit and branches not being covered.
 
 Haven't yet seen a false positive however.
 
-`MorphoLib.sol`, reported 0 hits:
+`MorphoLib.sol`, reported 0 hits - possibly due to inlining of `_array`:
 
 ```
       58                 :       97831 :     function _array(bytes32 x) private pure returns (bytes32[] memory) {
@@ -34,7 +34,7 @@ Haven't yet seen a false positive however.
       62                 :             :     }
 ```
 
-`MarketParamsLib.sol`, reported 0 hits:
+`MarketParamsLib.sol`, reported 0 hits in `assembly` block:
 
 ```
       16                 :      156257 :     function id(MarketParams memory marketParams) internal pure returns (Id marketParamsId) {
@@ -45,14 +45,14 @@ Haven't yet seen a false positive however.
       21                 :             : }
 ```
 
-`UtilsLib.sol`, multiple reported 0 hits:
+`UtilsLib.sol`, multiple reported 0 hits in `assembly` block:
 
 ```
        1                 :             : // SPDX-License-Identifier: GPL-2.0-or-later
        2                 :             : pragma solidity ^0.8.0;
-       3                 :             : 
+       3                 :             :
        4                 :             : import {ErrorsLib} from "../libraries/ErrorsLib.sol";
-       5                 :             : 
+       5                 :             :
        6                 :             : /// @title UtilsLib
        7                 :             : /// @author Morpho Labs
        8                 :             : /// @custom:contact security@morpho.org
@@ -65,20 +65,20 @@ Haven't yet seen a false positive however.
       15                 :           0 :             z := xor(iszero(x), iszero(y))
       16                 :             :         }
       17                 :             :     }
-      18                 :             : 
+      18                 :             :
       19                 :             :     /// @dev Returns the min of `x` and `y`.
       20                 :        2383 :     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
       21                 :             :         assembly {
       22                 :           0 :             z := xor(x, mul(xor(x, y), lt(y, x)))
       23                 :             :         }
       24                 :             :     }
-      25                 :             : 
+      25                 :             :
       26                 :             :     /// @dev Returns `x` safely cast to uint128.
       27                 :      188307 :     function toUint128(uint256 x) internal pure returns (uint128) {
       28         [ #  # ]:      188307 :         require(x <= type(uint128).max, ErrorsLib.MAX_UINT128_EXCEEDED);
       29                 :      188307 :         return uint128(x);
       30                 :             :     }
-      31                 :             : 
+      31                 :             :
       32                 :             :     /// @dev Returns max(0, x - y).
       33                 :        4944 :     function zeroFloorSub(uint256 x, uint256 y) internal pure returns (uint256 z) {
       34                 :             :         assembly {
@@ -88,18 +88,17 @@ Haven't yet seen a false positive however.
       38                 :             : }
 ```
 
-`Morpho.sol`, reported 0 hit and inaccurate branch coverage 17.9% as oppposed to 98.2%
-
+`Morpho.sol`, reported 0 hit in `assembly` block and inaccurate branch coverage 17.9% as oppposed to 98.2%
 
 ```
      544                 :       98343 :     function extSloads(bytes32[] calldata slots) external view returns (bytes32[] memory res) {
      545                 :       98343 :         uint256 nSlots = slots.length;
-     546                 :             : 
+     546                 :             :
      547                 :       98343 :         res = new bytes32[](nSlots);
-     548                 :             : 
+     548                 :             :
      549                 :       98343 :         for (uint256 i; i < nSlots;) {
      550                 :      102439 :             bytes32 slot = slots[i++];
-     551                 :             : 
+     551                 :             :
      552                 :             :             assembly ("memory-safe") {
      553                 :           0 :                 mstore(add(res, mul(i, 32)), sload(slot))
      554                 :             :             }
@@ -107,28 +106,59 @@ Haven't yet seen a false positive however.
      556                 :             :     }
 ```
 
-`ArrayLib.sol`, reported 0 hit
+`ArrayLib.sol`, reported 0 hit in `assembly` block:
 
 ```
        4                 :             : library ArrayLib {
        5                 :       14428 :     function removeAll(address[] memory inputs, address removed) internal pure returns (address[] memory result) {
        6                 :       14428 :         result = new address[](inputs.length);
-       7                 :             : 
+       7                 :             :
        8                 :       14428 :         uint256 nbAddresses;
        9                 :       14428 :         for (uint256 i; i < inputs.length; ++i) {
       10                 :       14428 :             address input = inputs[i];
-      11                 :             : 
+      11                 :             :
       12            [ + ]:       14428 :             if (input != removed) {
       13                 :        7135 :                 result[nbAddresses] = input;
       14                 :        7135 :                 ++nbAddresses;
       15                 :             :             }
       16                 :             :         }
-      17                 :             : 
+      17                 :             :
       18                 :             :         assembly {
       19                 :           0 :             mstore(result, nbAddresses)
       20                 :             :         }
       21                 :             :     }
       22                 :             : }
+```
+
+`ERC20Mock.sol`, reported 0 hit on `return`, branch coverage in reported correctly:
+
+```
+      27                 :       19128 :     function transfer(address to, uint256 amount) public virtual returns (bool) {
+      28         [ #  # ]:       19128 :         require(balanceOf[msg.sender] >= amount, "insufficient balance");
+      29                 :             :
+      30                 :       19128 :         balanceOf[msg.sender] -= amount;
+      31                 :       19128 :         balanceOf[to] += amount;
+      32                 :             :
+      33                 :       19128 :         emit Transfer(msg.sender, to, amount);
+      34                 :             :
+      35                 :           0 :         return true;
+      36                 :             :     }
+      37                 :             :
+      38                 :       39278 :     function transferFrom(address from, address to, uint256 amount) public virtual returns (bool) {
+      39         [ #  # ]:       39278 :         require(allowance[from][msg.sender] >= amount, "insufficient allowance");
+      40                 :             :
+      41                 :       39278 :         allowance[from][msg.sender] -= amount;
+      42                 :             :
+      43         [ #  # ]:       37998 :         require(balanceOf[from] >= amount, "insufficient balance");
+      44                 :             :
+      45                 :       37998 :         balanceOf[from] -= amount;
+      46                 :       37998 :         balanceOf[to] += amount;
+      47                 :             :
+      48                 :       37998 :         emit Transfer(from, to, amount);
+      49                 :             :
+      50                 :           0 :         return true;
+      51                 :             :     }
+      52                 :             : }
 ```
 
 ## Credit

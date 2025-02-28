@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-02-24 12:52:17</td>
+            <td class="headerValue">2025-02-28 17:40:01</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -87,22 +87,22 @@
 <span id="L16"><span class="lineNum">      16</span>                 :             : /// @notice Library to manage transfers of tokens, even if calls to the transfer or transferFrom functions are not</span>
 <span id="L17"><span class="lineNum">      17</span>                 :             : /// returning a boolean.</span>
 <span id="L18"><span class="lineNum">      18</span>                 :             : library SafeTransferLib {</span>
-<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC tlaBgGNC">       19895 :     function safeTransfer(IERC20 token, address to, uint256 value) internal {</span></span>
-<span id="L20"><span class="lineNum">      20</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19639 times"> + </span>]:<span class="tlaGNC">       19895 :         require(address(token).code.length &gt; 0, ErrorsLib.NO_CODE);</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC tlaBgGNC">       19896 :     function safeTransfer(IERC20 token, address to, uint256 value) internal {</span></span>
+<span id="L20"><span class="lineNum">      20</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19640 times"> + </span>]:<span class="tlaGNC">       19896 :         require(address(token).code.length &gt; 0, ErrorsLib.NO_CODE);</span></span>
 <span id="L21"><span class="lineNum">      21</span>                 :             : </span>
-<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">       19639 :         (bool success, bytes memory returndata) =</span></span>
-<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">       19639 :             address(token).call(abi.encodeCall(IERC20Internal.transfer, (to, value)));</span></span>
-<span id="L24"><span class="lineNum">      24</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaGBC" title="Branch 1 was taken 19639 times"> + </span>]:<span class="tlaGNC">       19639 :         require(success, ErrorsLib.TRANSFER_REVERTED);</span></span>
-<span id="L25"><span class="lineNum">      25</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19383 times"> + </span>]:<span class="tlaGNC">       19639 :         require(returndata.length == 0 || abi.decode(returndata, (bool)), ErrorsLib.TRANSFER_RETURNED_FALSE);</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">       19640 :         (bool success, bytes memory returndata) =</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">       19640 :             address(token).call(abi.encodeCall(IERC20Internal.transfer, (to, value)));</span></span>
+<span id="L24"><span class="lineNum">      24</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaGBC" title="Branch 1 was taken 19640 times"> + </span>]:<span class="tlaGNC">       19640 :         require(success, ErrorsLib.TRANSFER_REVERTED);</span></span>
+<span id="L25"><span class="lineNum">      25</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19384 times"> + </span>]:<span class="tlaGNC">       19640 :         require(returndata.length == 0 || abi.decode(returndata, (bool)), ErrorsLib.TRANSFER_RETURNED_FALSE);</span></span>
 <span id="L26"><span class="lineNum">      26</span>                 :             :     }</span>
 <span id="L27"><span class="lineNum">      27</span>                 :             : </span>
-<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">       40577 :     function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {</span></span>
-<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaGBC" title="Branch 0 was taken 768 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 39809 times"> + </span>]:<span class="tlaGNC">       40577 :         require(address(token).code.length &gt; 0, ErrorsLib.NO_CODE);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">       40511 :     function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {</span></span>
+<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaGBC" title="Branch 0 was taken 768 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 39743 times"> + </span>]:<span class="tlaGNC">       40511 :         require(address(token).code.length &gt; 0, ErrorsLib.NO_CODE);</span></span>
 <span id="L30"><span class="lineNum">      30</span>                 :             : </span>
-<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">       39809 :         (bool success, bytes memory returndata) =</span></span>
-<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">       39809 :             address(token).call(abi.encodeCall(IERC20Internal.transferFrom, (from, to, value)));</span></span>
-<span id="L33"><span class="lineNum">      33</span>         [<span class="tlaGBC" title="Branch 0 was taken 1280 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38529 times"> + </span>]:<span class="tlaGNC">       39809 :         require(success, ErrorsLib.TRANSFER_FROM_REVERTED);</span></span>
-<span id="L34"><span class="lineNum">      34</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38273 times"> + </span>]:<span class="tlaGNC">       38529 :         require(returndata.length == 0 || abi.decode(returndata, (bool)), ErrorsLib.TRANSFER_FROM_RETURNED_FALSE);</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">       39743 :         (bool success, bytes memory returndata) =</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">       39743 :             address(token).call(abi.encodeCall(IERC20Internal.transferFrom, (from, to, value)));</span></span>
+<span id="L33"><span class="lineNum">      33</span>         [<span class="tlaGBC" title="Branch 0 was taken 1280 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38463 times"> + </span>]:<span class="tlaGNC">       39743 :         require(success, ErrorsLib.TRANSFER_FROM_REVERTED);</span></span>
+<span id="L34"><span class="lineNum">      34</span>         [<span class="tlaGBC" title="Branch 0 was taken 256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38207 times"> + </span>]:<span class="tlaGNC">       38463 :         require(returndata.length == 0 || abi.decode(returndata, (bool)), ErrorsLib.TRANSFER_FROM_RETURNED_FALSE);</span></span>
 <span id="L35"><span class="lineNum">      35</span>                 :             :     }</span>
 <span id="L36"><span class="lineNum">      36</span>                 :             : }</span>
         </pre>
